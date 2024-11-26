@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-info-config
+  namespace: aws-info
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>IoT con AWS</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #1f1c2c, #928dab);
+                color: white;
+                overflow-x: hidden;
+            }
+            header {
+                text-align: center;
+                padding: 50px 20px;
+            }
+            header h1 {
+                font-size: 3em;
+                color: #00d4ff;
+                text-shadow: 0 0 20px #00d4ff, 0 0 30px #00d4ff;
+            }
+            header p {
+                font-size: 1.2em;
+                color: #ddd;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 20px;
+            }
+            .card {
+                background: rgba(0, 0, 0, 0.7);
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+            .card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+            }
+            .card h2 {
+                color: #00d4ff;
+            }
+            .example-section {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: space-between;
+            }
+            .example-card {
+                flex: 1 1 calc(30% - 20px);
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 10px;
+                padding: 15px;
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+            .example-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+            }
+            .example-card h3 {
+                font-size: 1.5em;
+                color: #00d4ff;
+                margin-bottom: 10px;
+            }
+            .example-card p {
+                font-size: 1em;
+                color: #ccc;
+            }
+            canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="bg"></canvas>
+        <header>
+            <h1>IoT con AWS</h1>
+            <p>Descubre cómo AWS potencia soluciones IoT innovadoras para conectar dispositivos, procesar datos y optimizar operaciones.</p>
+        </header>
+        <div class="container">
+            <div class="card">
+                <h2>¿Qué es IoT?</h2>
+                <p>
+                    El Internet de las cosas (IoT) conecta dispositivos físicos con el mundo digital para recopilar datos, automatizar procesos
+                    y optimizar la eficiencia. Dispositivos como sensores, cámaras y electrodomésticos pueden transmitir información en tiempo real.
+                </p>
+            </div>
+            <div class="card">
+                <h2>Ejemplos de IoT con AWS</h2>
+                <div class="example-section">
+                    <div class="example-card">
+                        <h3>Monitorización en tiempo real</h3>
+                        <p>
+                            Usando <strong>AWS IoT Core</strong>, se pueden conectar sensores de maquinaria para transmitir datos en tiempo real, 
+                            identificando posibles fallos antes de que ocurran. Ideal para manufactura y mantenimiento preventivo.
+                        </p>
+                    </div>
+                    <div class="example-card">
+                        <h3>Dispositivos inteligentes para el hogar</h3>
+                        <p>
+                            AWS IoT permite a los desarrolladores construir aplicaciones para dispositivos inteligentes como termostatos o cámaras de seguridad, 
+                            integrando control remoto y automatización mediante AWS Lambda y AWS IoT Greengrass.
+                        </p>
+                    </div>
+                    <div class="example-card">
+                        <h3>Gestión de flotas de transporte</h3>
+                        <p>
+                            Con AWS IoT Analytics, empresas de transporte pueden analizar datos de GPS y sensores de vehículos para optimizar rutas, 
+                            reducir costos de combustible y mejorar la seguridad.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const canvas = document.getElementById('bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+            class Particle {
+                constructor(x, y, radius, speedX, speedY) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = radius;
+                    this.speedX = speedX;
+                    this.speedY = speedY;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.7)';
+                    ctx.fill();
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    this.draw();
+                }
+            }
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < 100; i++) {
+                    const radius = Math.random() * 3 + 1;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const speedX = (Math.random() - 0.5) * 2;
+                    const speedY = (Math.random() - 0.5) * 2;
+                    particles.push(new Particle(x, y, radius, speedX, speedY));
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(particle => particle.update());
+                requestAnimationFrame(animate);
+            }
+            initParticles();
+            animate();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            });
+        </script>
+    </body>
+    </html>
